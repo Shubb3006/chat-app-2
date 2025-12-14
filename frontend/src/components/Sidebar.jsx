@@ -130,6 +130,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     getUserList();
+    console.log("Fetched users:", users);
   }, [getUserList]);
 
   const [showOnlineUsersOnly, setShowOnlineUsersOnly] = useState(false);
