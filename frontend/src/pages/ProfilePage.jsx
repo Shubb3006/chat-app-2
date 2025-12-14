@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Camera, Mail, User } from "lucide-react";
-import { useAuthStore } from "../store/useAuthstore";
+import { useAuthStore } from "../store/useAuthstore.js";
 
 const ProfilePage = () => {
   const { authUser, isUpdatingProfile, uploadImage } = useAuthStore();
