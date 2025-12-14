@@ -79,7 +79,7 @@ app.use(
 ); //
 
 app.use("/api/auth", authRoutes); // for api calls it will go to auth.route.js
-app.use("/api/message", messageRoutes); // for api calls about messages it will go to auth.route.js
+app.use("/api/messages", messageRoutes); // for api calls about messages it will go to auth.route.js
 
 // if (process.env.NODE_ENV === "production") {
 //   app.use(express.static(path.join(__dirname, "../frontend/dist")));
