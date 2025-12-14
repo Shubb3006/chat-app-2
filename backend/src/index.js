@@ -70,7 +70,10 @@ app.use(express.json({ limit: "20mb" }));
 app.use(express.urlencoded({ limit: "20mb", extended: true }));
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://full-stack-chat-app-f6fa.onrender.com/",
+    ],
     credentials: true,
   })
 ); //
