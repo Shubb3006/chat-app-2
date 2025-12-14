@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SideBarSkeleton from "../components/skeletons/SideBarSkeleton.jsx";
 import { useAuthStore } from "../store/useAuthStore.js";
-import { useChatStore } from "../store/useChatstore.js";
+import { useChatStore } from "../store/useChatStore.js";
 
 const Sidebar = () => {
   const [searchUser, setSearchUser] = useState("");

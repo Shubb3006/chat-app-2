@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Image, Loader, Send, X } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
-import { useChatStore } from "../store/useChatstore";
+import { useChatStore } from "../store/useChatStore";
 
 const MessageInput = () => {
   const { authUser, socket } = useAuthStore();
