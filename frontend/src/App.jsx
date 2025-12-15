@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import ProfilePage from "./pages/ProfilePage";
 import { Loader2 } from "lucide-react";
 import NotFoundPage from "./pages/NotFound";
+import StatusPage from "./pages/StatusPage";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
@@ -45,6 +46,10 @@ function App() {
         <Route
           path="/profile"
           element={authUser ? <ProfilePage /> : <Navigate to="/signin" />}
+        />
+        <Route
+          path="/status"
+          element={authUser ? <StatusPage /> : <Navigate to="/signin" />}
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>

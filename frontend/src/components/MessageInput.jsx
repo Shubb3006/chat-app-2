@@ -23,6 +23,7 @@ const MessageInput = () => {
 
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
+       typingTimeoutRef.current = null;
     }
 
     typingTimeoutRef.current = setTimeout(() => {
