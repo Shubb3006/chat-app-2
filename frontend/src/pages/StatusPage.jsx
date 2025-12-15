@@ -38,7 +38,7 @@ const StatusPage = () => {
       {/* Status Row */}
       <div className="flex gap-4 px-4 py-3 overflow-x-auto">
         {/* My Status */}
-        <div className="flex flex-col items-center ">
+        <div className="flex flex-col items-center w-20 shrink-0">
           <div className="relative">
             <img
               src={selectedImage || authUser.profilePic || "/avatar.png"}
@@ -48,7 +48,7 @@ const StatusPage = () => {
 
             <label
               htmlFor="status-upload"
-              className={`absolute bottom-0 right-0 bg-primary p-1.5 rounded-full cursor-pointer 
+              className={`absolute bottom-0 right-0 bg-primary p-1.5 rounded-full cursor-pointer
               ${isUploading ? "animate-pulse pointer-events-none" : ""}`}
             >
               <Camera className="w-4 h-4 text-white" />
