@@ -10,9 +10,9 @@ const Navbar = () => {
   }
   return (
     <header className="border-b border-base-300 fixed w-full top-0 z-40 backdrop-blur-lg bg-base-100/80">
-      <div className="container mx-auto px-4 h-16">
+      <div className="container mx-auto pl-4 h-16">
         <div className="flex items-center justify-between h-full">
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-4">
             <Link
               to="/"
               className="flex items-center gap-2.5 hover:opacity-80 transition-all"
@@ -22,7 +22,7 @@ const Navbar = () => {
               </div>
               <h1 className="text-lg font-bold">Chaty</h1>
             </Link>
-            <Link to="/status" className="btn btn-sm gap-2">
+            <Link to="/status" className="btn btn-sm ">
               <Image className="size-5  text-primary" />
               <span className="hidden sm:inline">Status</span>
             </Link>
