@@ -39,8 +39,6 @@ const StatusPage = () => {
     };
   };
 
-  if (isLoading || !authUser._id) return <StatusSkeleton />;
-
   const groupedStatuses = statuses.reduce((acc, status) => {
     const userId = status.userId?._id;
     if (!userId) return acc;
@@ -56,8 +54,27 @@ const StatusPage = () => {
     return acc;
   }, {});
 
+  useEffect(() => {
+    if (!activeUserId) return;
+    const total = groupedStatuses[activeUserId]?.statuses.length || 0;
+    if (total == 0) return;
+
+    const timer = setTimeout(() => {
+      setActiveIndex((prev) => {
+        if (prev < total - 1) return prev + 1;
+        setActiveUserId(null);
+
+        return prev;
+      });
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [activeIndex, activeUserId, groupedStatuses]);
+
   const myStatuses = groupedStatuses[authUser._id]?.statuses || [];
   const hasStatus = myStatuses.length > 0;
+
+  if (isLoading || !authUser._id) return <StatusSkeleton />;
 
   return (
     <div className="pt-20 bg-base-200 min-h-screen">
@@ -65,22 +82,25 @@ const StatusPage = () => {
       <div className="flex gap-4 px-4 py-3 overflow-x-auto">
         {/* My Status */}
         <div className="flex flex-col items-center w-20 shrink-0">
-          <button
-            onClick={() => {
-              if (hasStatus) {
-                setActiveIndex(0);
-                setActiveUserId(authUser._id);
-              }
-            }}
-            className="relative"
-          >
-            <img
-              src={selectedImage || authUser.profilePic || "/avatar.png"}
-              alt="My Status"
-              className={`w-20 h-20 rounded-full object-cover border-2 ${
-                hasStatus ? "border-green-500" : "border-gray-500"
-              }`}
-            />
+          <div className="relative">
+            <button
+              onClick={() => {
+                if (hasStatus) {
+                  setActiveIndex(0);
+                  setActiveUserId(authUser._id);
+                }
+              }}
+              className=""
+            >
+              <img
+                src={selectedImage || authUser.profilePic || "/avatar.png"}
+                alt="My Status"
+                className={`w-20 h-20 rounded-full object-cover border-2 relative ${
+                  hasStatus ? "border-green-500" : "border-gray-500"
+                }`}
+              />
+            </button>
+
             <label
               htmlFor="status-upload"
               className={`absolute bottom-0 right-0 bg-primary p-1.5 rounded-full cursor-pointer
@@ -96,7 +116,7 @@ const StatusPage = () => {
                 disabled={isUploading}
               />
             </label>
-          </button>
+          </div>
 
           <span className="text-xs mt-2 text-center">
             {isUploading ? "Uploading..." : "My Status"}
@@ -135,7 +155,7 @@ const StatusPage = () => {
             {/* Status Image */}
             <img
               src={groupedStatuses[activeUserId].statuses[activeIndex].image}
-              className="max-w-full max-h-full object-contain"
+              className="max-w-150 max-h-full object-contain"
             />
 
             {/* Close */}
