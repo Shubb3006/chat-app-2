@@ -18,6 +18,8 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
+  console.log(authUser)
+
   if (isCheckingAuth && !authUser) {
     return (
       <div className="min-h-screen flex justify-center items-center">

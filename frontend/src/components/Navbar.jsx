@@ -22,10 +22,12 @@ const Navbar = () => {
               </div>
               <h1 className="text-lg font-bold">Chaty</h1>
             </Link>
-            <Link to="/status" className="btn btn-sm ">
-              <Image className="size-5  text-primary" />
-              <span className="hidden sm:inline">Status</span>
-            </Link>
+            {authUser && (
+              <Link to="/status" className="btn btn-sm ">
+                <Image className="size-5  text-primary" />
+                <span className="hidden sm:inline">Status</span>
+              </Link>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {authUser ? (

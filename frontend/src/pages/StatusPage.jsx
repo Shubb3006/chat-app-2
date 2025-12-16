@@ -6,14 +6,23 @@ import StatusSkeleton from "../components/skeletons/StatusSkeleton";
 
 const StatusPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedStatusId, setSelectedStatusId] = useState(null);
-  const { authUser } = useAuthStore();
+
+  const [activeUserId, setActiveUserId] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const { authUser, checkAuth } = useAuthStore();
   const { statuses, getStatuses, isLoading, isUploading, addStatus } =
     useStatusStore();
 
   useEffect(() => {
-    getStatuses();
+    checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (authUser?._id) {
+      getStatuses();
+    }
+  }, [authUser._id, getStatuses]);
 
   const handleStatusUpload = async (e) => {
     const file = e.target.files[0];
@@ -24,14 +33,32 @@ const StatusPage = () => {
     reader.onload = async () => {
       setSelectedImage(reader.result);
       await addStatus({ image: reader.result });
+      setSelectedImage(null);
+
+      getStatuses();
     };
   };
 
-  if (isLoading) return <StatusSkeleton />;
+  if (isLoading || !authUser._id) return <StatusSkeleton />;
+  console.log(authUser._id);
 
-  const selectedStatus = statuses.find(
-    (status) => status._id === selectedStatusId
-  );
+  const groupedStatuses = statuses.reduce((acc, status) => {
+    const userId = status.userId?._id;
+    if (!userId) return acc;
+
+    if (!acc[userId]) {
+      acc[userId] = {
+        user: status.userId,
+        statuses: [],
+      };
+    }
+
+    acc[userId].statuses.push(status);
+    return acc;
+  }, {});
+
+  const myStatuses = groupedStatuses[authUser._id]?.statuses || [];
+  const hasStatus = myStatuses.length > 0;
 
   return (
     <div className="pt-20 bg-base-200 min-h-screen">
@@ -39,13 +66,22 @@ const StatusPage = () => {
       <div className="flex gap-4 px-4 py-3 overflow-x-auto">
         {/* My Status */}
         <div className="flex flex-col items-center w-20 shrink-0">
-          <div className="relative">
+          <button
+            onClick={() => {
+              if (hasStatus) {
+                setActiveIndex(0);
+                setActiveUserId(authUser._id);
+              }
+            }}
+            className="relative"
+          >
             <img
               src={selectedImage || authUser.profilePic || "/avatar.png"}
               alt="My Status"
-              className="w-20 h-20 rounded-full object-cover border-2 border-gray-300"
+              className={`w-20 h-20 rounded-full object-cover border-2 ${
+                hasStatus ? "border-green-500" : "border-gray-500"
+              }`}
             />
-
             <label
               htmlFor="status-upload"
               className={`absolute bottom-0 right-0 bg-primary p-1.5 rounded-full cursor-pointer
@@ -61,7 +97,7 @@ const StatusPage = () => {
                 disabled={isUploading}
               />
             </label>
-          </div>
+          </button>
 
           <span className="text-xs mt-2 text-center">
             {isUploading ? "Uploading..." : "My Status"}
@@ -69,39 +105,76 @@ const StatusPage = () => {
         </div>
 
         {/* Other Users Status */}
-        {statuses.map((status) => (
-          <button
-            key={status._id}
-            className="flex flex-col items-center hover:cursor-pointer"
-            onClick={() => setSelectedStatusId(status._id)}
-          >
+        {Object.values(groupedStatuses)
+          .filter(({ user }) => user._id !== authUser._id)
+          .map(({ user, statuses }) => (
+            <button
+              key={user._id}
+              onClick={() => {
+                setActiveUserId(user._id);
+                setActiveIndex(0);
+              }}
+              className={`flex flex-col items-center`}
+            >
+              <img
+                src={
+                  statuses[statuses.length - 1].image ||
+                  statuses[0].userId.profilePic ||
+                  "/avatar.png"
+                }
+                className="w-20 h-20 rounded-full border-2 border-green-500 object-cover"
+              />
+
+              <span className="text-xs mt-2 truncate w-20 text-center">
+                {user.fullName}
+              </span>
+            </button>
+          ))}
+
+        {activeUserId && (
+          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
+            {/* Status Image */}
             <img
-              src={status.image || status.userId?.profilePic || "/avatar.png"}
-              alt="status"
-              className="w-20 h-20 rounded-full object-cover border-2 border-green-500"
+              src={groupedStatuses[activeUserId].statuses[activeIndex].image}
+              className="max-w-full max-h-full object-contain"
             />
-            <span className="text-xs mt-2 text-center truncate w-20">
-              {status.userId?.fullName || "User"}
-            </span>
-          </button>
-        ))}
+
+            {/* Close */}
+            <button
+              onClick={() => setActiveUserId(null)}
+              className="absolute top-4 right-4 text-white"
+            >
+              <X size={28} />
+            </button>
+
+            {/* Next */}
+            <button
+              className="absolute right-4 text-white text-3xl"
+              onClick={() => {
+                const total = groupedStatuses[activeUserId].statuses.length;
+
+                if (activeIndex < total - 1) {
+                  setActiveIndex((i) => i + 1);
+                } else {
+                  setActiveUserId(null);
+                }
+              }}
+            >
+              ▶
+            </button>
+
+            {/* Previous */}
+            {activeIndex > 0 && (
+              <button
+                className="absolute left-4 text-white text-3xl"
+                onClick={() => setActiveIndex((i) => i - 1)}
+              >
+                ◀
+              </button>
+            )}
+          </div>
+        )}
       </div>
-
-      {selectedStatus && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
-          <img
-            src={selectedStatus.image}
-            className="max-w-full max-h-full object-contain"
-          />
-
-          <button
-            onClick={() => setSelectedStatusId(null)}
-            className="absolute top-4 right-4 text-white"
-          >
-            <X size={28} className="hover:cursor-pointer" />
-          </button>
-        </div>
-      )}
     </div>
   );
 };
