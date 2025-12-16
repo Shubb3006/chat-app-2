@@ -40,7 +40,6 @@ const StatusPage = () => {
   };
 
   if (isLoading || !authUser._id) return <StatusSkeleton />;
-  console.log(authUser._id);
 
   const groupedStatuses = statuses.reduce((acc, status) => {
     const userId = status.userId?._id;
