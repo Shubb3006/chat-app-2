@@ -36,6 +36,7 @@ const Sidebar = () => {
     user.fullName.toLowerCase().includes(searchUser.toLowerCase())
   );
 
+  console.log(filteredUsers)
   if (isUsersLoading) return <SideBarSkeleton />;
 
   return (
