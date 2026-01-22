@@ -31,7 +31,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route
-          path="/"
+          path="/"  
           element={authUser ? <HomePage /> : <Navigate to="/signin" />}
         />
         <Route
